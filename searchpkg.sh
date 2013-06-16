@@ -12,24 +12,18 @@ title(){
 }
 
 terminate(){
-  echo -e '\nDont forget to visit \033[1;37mhttp://bl4ck5w4n.blogspot.com\033[1;m for more tools and tutorials\n'
+	echo -e '\nIf you wish to run searchpkg without menu you can use it with arguments: searchpkg.sh <filter>'
+	echo -e 'Dont forget to visit \033[1;37mhttp://bl4ck5w4n.blogspot.com\033[1;m for more tools and tutorials\n'
 	
 	
 }
 
-main(){
-		title
-		echo -e 'List all Packages [l]' 
+
+listpkg(){
+
 		
-		echo -e 'Filter Packages [<filter>]'
-		echo -e 'Quit [q]'
-		echo -n -e '\n\n> '
-		read choice
 		if [ "$choice" == "l" ]; then
 			dpkg-query -W -f '\n ${package} - ${version} : ${description} ${maintainer}\n' | grep -i 'kali'
-			echo -e -n '\n[ENTER] return to menu'
-			read
-			main
 		
 		elif [ "$choice" == "q" ] || [ "$choice" == "" ]; then
 			terminate
@@ -37,11 +31,32 @@ main(){
 		
 		else
 			dpkg-query -W -f '\n ${package} - ${version} : ${description} ${maintainer}\n' | grep -i 'kali' | grep -i $choice
-			echo -e -n '\n[ENTER] return to menu'
-			read 
-			main
-		fi
+		fi	
+	}
+	
+
+menu(){
+		title
+		echo -e 'List all Packages [l]' 
+		
+		echo -e 'Filter Packages [<filter>]'
+		echo -e 'Quit [q]'
+		echo -n -e '\n\n> '
+		read choice
+
+		listpkg $choice	
+			
+		echo -e -n '\n[ENTER] return to menu'
+		read
+		menu
 }
 
-main
+
+if [ -z "$1" ]; then
+	menu
+else
+	title
+	choice=$1
+	listpkg $choice
+fi
 
